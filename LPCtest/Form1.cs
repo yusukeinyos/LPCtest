@@ -28,6 +28,31 @@ namespace LPCtest
             return r;
         }
         //----------------------------------------------------
-
+        double[] levinson_durbin(double[] r, int order)
+        {
+            double[] a = new double[order + 1];
+            double e;
+            double[] lambda = new double[order + 1];
+            a[0] = 1.0;
+            a[1] = -r[1] / r[0];
+            e = r[0] + r[1] * a[1];
+            lambda[0] = -r[1] / r[0];
+            for (int i = 1; i < order + 1; i++)
+            {
+                double sum = 0;
+                for (int j = 0; j < i; j++)
+                {
+                    sum += a[j] * r[i + 1 - j];
+                }
+                lambda[i] = -sum / e;
+                for (int j = 1; j < i + 1; j++)
+                {
+                    a[j] = a[j] + lambda[i] * a[i + 1 - j];
+                }
+                a[i + 1] = lambda[i] * a[0];
+            }
+            return a;
+        }
+        //----------------------------------------------------
     }
 }
