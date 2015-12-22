@@ -33,9 +33,9 @@ namespace LPCtest
         {
             int N = x.Length;
             double[] prediction = new double[N];
-            for (int i = 0; i < N; i++)
+            for (int i = order; i < N; i++)
             {
-                for (int j = 0; j < order; j++)
+                for (int j = 1; j < order + 1; j++)
                 {
                     if (!(i - j < 0))
                         prediction[i] -= lpc[j] * x[i - j];
@@ -64,7 +64,7 @@ namespace LPCtest
             a[1] = -r[1] / r[0];
             e = r[0] + r[1] * a[1];
             lambda[0] = -r[1] / r[0];
-            for (int i = 1; i < order ; i++)
+            for (int i = 1; i < order; i++)
             {
                 double sum = 0;
                 for (int j = 0; j < i + 1; j++)
