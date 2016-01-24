@@ -44,14 +44,18 @@ namespace LPCtest
             return prediction;
         }
         //----------------------------------------------------
+        //自己相関関数(order次)
         double[] auto_correlation(double[] x)
         {
             int N = x.Length;
             double[] r = new double[order + 1];
             for (int i = 0; i < order + 1; i++)
+            {
                 for (int j = 0; j < N; j++)
                     if (i + j < N)
                         r[i] += x[j] * x[j + i];
+                r[i] /= N;
+            }
             return r;
         }
         //----------------------------------------------------
@@ -82,6 +86,27 @@ namespace LPCtest
             return a;
         }
         //----------------------------------------------------
+        double[] levinson_durbin2(double[] r)
+        {
+            double[] k=new double[order];
+            double[] a = new double[order + 1];
+            double[] u = new double[order + 1];
+            double[] v = new double[order + 1];
+            u[0] = r[0]; v[0] = r[1];
+            for (int i = 1; i < order+1; i++)
+            {
+                k[i] = v[i-1] / u[i-1];
+                double sum = 0;
+                for (int j = 1; j < i; j++)
+                {
+                    sum += a[i - 1] - k[i] * a[i - 1];
+                }
+                v[i] = sum;
+            }
+
+            return a;
+        }
+        //----------------------------------------------------
         double[][] readData(string filename)
         {
             double[][] d;
@@ -106,7 +131,7 @@ namespace LPCtest
         private void button1_Click(object sender, EventArgs e)
         {
             double[][] data = readData("data.csv");
-            x = New.Array(data.Length, d => data[d][1]);
+            x = New.Array(data.Length, d => data[d][0]);
             x_hat = LinearPrediction(x, levinson_durbin(auto_correlation(x)), order);
         }
     }
